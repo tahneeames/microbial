@@ -142,12 +142,19 @@ while read file; do mv "$file" ~/magFiles/low; done < ~/magFiles/checkMqa_lowLis
 #GTDB-TK for bacterial classification 
 
 #new directory for it in magFiles directory 
-mkdir gtdbtk 
-cd gtdbtk
+#make one for the high-quality samples 
+mkdir gtdbtk_high  
+cd gtdbtk_high
 mkdir identify 
 mkdir align 
 mkdir classify 
 
+#make another for medium quality samples 
+mkdir gtdbtk_med
+cd gtdbtk_med
+mkdir identify 
+mkdir align 
+mkdir classify 
 
 ########################
 
@@ -174,11 +181,11 @@ nano gtdbtk_high.slurm
 
 conda activate gtdbtk-2.7.2
 
-gtdbtk identify --genome_dir ~/magFiles/high --out_dir ~/magFiles/gtdbtk/identify --extension fa --cpus 8
+gtdbtk identify --genome_dir ~/magFiles/high --out_dir ~/magFiles/gtdbtk_high/identify --extension fa --cpus 8
 
-gtdbtk align --identify_dir ~/magFiles/gtdbtk/identify --out_dir ~/magFiles/gtdbtk/align --cpus 8
+gtdbtk align --identify_dir ~/magFiles/gtdbtk_high/identify --out_dir ~/magFiles/gtdbtk_high/align --cpus 8
 
-gtdbtk classify --genome_dir ~/magFiles/high --align_dir ~/magFiles/gtdbtk/align --out_dir ~/magFiles/gtdbtk/classify --extension fa --cpus 8
+gtdbtk classify --genome_dir ~/magFiles/high --align_dir ~/magFiles/gtdbtk_high/align --out_dir ~/magFiles/gtdbtk_high/classify --extension fa --cpus 8
 
 
 ########################
@@ -212,11 +219,12 @@ nano gtdbtk_med.slurm
 
 conda activate gtdbtk-2.7.2
 
-gtdbtk identify --genome_dir ~/magFiles/med --out_dir ~/magFiles/gtdbtk/identify --extension fa --cpus 8
+gtdbtk identify --genome_dir ~/magFiles/med --out_dir ~/magFiles/gtdbtk_med/identify --extension fa --cpus 8
 
-gtdbtk align --identify_dir ~/magFiles/gtdbtk/identify --out_dir ~/magFiles/gtdbtk/align --cpus 8
+gtdbtk align --identify_dir ~/magFiles/gtdbtk_med/identify --out_dir ~/magFiles/gtdbtk_med/align --cpus 8
 
-gtdbtk classify --genome_dir ~/magFiles/med --align_dir ~/magFiles/gtdbtk/align --out_dir ~/magFiles/gtdbtk/classify --extension fa --cpus 8
+gtdbtk classify --genome_dir ~/magFiles/med --align_dir ~/magFiles/gtdbtk_med/align --out_dir ~/magFiles/gtdbtk_med/classify --extension fa --cpus 8
+
 
 
 
