@@ -33,7 +33,7 @@ conda activate gtdbtk-2.7.2
 wget https://data.ace.uq.edu.au/public/gtdb/data/releases/latest/auxillary_files/gtdbtk_package/full_package/gtdbtk_data.tar.gz
 tar xvzf gtdbtk_data.tar.gz
 #write path to database
-conda env config vars set GTDBTK_DATA_PATH="/home/taames/miniforge3/envs/gtdbtk-2.7.2/share/gtdbtk-2.7.2/db"
+conda env config vars set GTDBTK_DATA_PATH="$home/miniforge3/envs/gtdbtk-2.7.2/share/gtdbtk-2.7.2/db"
 
 ########################
 
@@ -60,12 +60,12 @@ mkdir MAGs
 mkdir checkM_magFiles
 #grab samples 
 sftp #cluster where the MAGs are at 
-lcd ~/magFiles
+lcd $home/magFiles
 cd #sample directory 
 get *.fa #retrieve MAGs for the sample 
 
 #make analyze directory 
-mkdir ~/magFiles/checkM_magFiles/analyze
+mkdir $home/magFiles/checkM_magFiles/analyze
 
 ########################
 
@@ -93,11 +93,11 @@ nano checkM.slurm
 
 conda activate checkm 
 
-checkm lineage_wf -t 8 -x fa ~/magFiles/MAGs ~/magFiles/checkM_magFiles #metagenome file location - output directory
+checkm lineage_wf -t 8 -x fa $home/magFiles/MAGs $home/magFiles/checkM_magFiles #metagenome file location - output directory
 
-checkm analyze -t 8 -x fa ~/magFiles/checkM_magFiles/lineage.ms ~/magFiles/MAGs ~/magFiles/checkM_magFiles/analyze #lineage file from previous step - metagenome file location - output folder
+checkm analyze -t 8 -x fa $home/magFiles/checkM_magFiles/lineage.ms $home/magFiles/MAGs $home/magFiles/checkM_magFiles/analyze #lineage file from previous step - metagenome file location - output folder
 
-checkm qa -f checkM_qa.tsv --tab_table -t 8 ~/magFiles/checkM_magFiles/lineage.ms ~/magFiles/checkM_magFiles/analyze #lineage file from lineage_wf step - analyze folder output from analyze step 
+checkm qa -f checkM_qa.tsv --tab_table -t 8 $home/magFiles/checkM_magFiles/lineage.ms $home/magFiles/checkM_magFiles/analyze #lineage file from lineage_wf step - analyze folder output from analyze step 
 
 
 ########################
@@ -111,7 +111,7 @@ sbatch checkM.slurm
 
 
 #processing QA into high, med, and low quality bins for downstream steps 
-cd ~/magFiles
+cd $home/magFiles
 #make new folders to sort checkM files 
 mkdir high
 mkdir med 
@@ -131,9 +131,9 @@ awk -F'\t' '{print $1 ".fa"}' checkMqa_low.tsv > checkMqa_lowList.txt
 
 #move the files from the MAGs directory into these folders based on above crireria 
 cd MAGs 
-while read file; do mv "$file" ~/magFiles/high; done < ~/magFiles/checkMqa_highList.txt 
-while read file; do mv "$file" ~/magFiles/med; done < ~/magFiles/checkMqa_medList.txt  
-while read file; do mv "$file" ~/magFiles/low; done < ~/magFiles/checkMqa_lowList.txt 
+while read file; do mv "$file" $home/magFiles/high; done < $home/magFiles/checkMqa_highList.txt 
+while read file; do mv "$file" $home/magFiles/med; done < $home/magFiles/checkMqa_medList.txt  
+while read file; do mv "$file" $home/magFiles/low; done < $home/magFiles/checkMqa_lowList.txt 
 
 
 ########################################################################
@@ -143,6 +143,7 @@ while read file; do mv "$file" ~/magFiles/low; done < ~/magFiles/checkMqa_lowLis
 
 #new directory for it in magFiles directory 
 #make one for the high-quality samples 
+cd $home/magFiles
 mkdir gtdbtk_high  
 cd gtdbtk_high
 mkdir identify 
@@ -150,6 +151,7 @@ mkdir align
 mkdir classify 
 
 #make another for medium quality samples 
+cd $home/magFiles
 mkdir gtdbtk_med
 cd gtdbtk_med
 mkdir identify 
@@ -181,11 +183,11 @@ nano gtdbtk_high.slurm
 
 conda activate gtdbtk-2.7.2
 
-gtdbtk identify --genome_dir ~/magFiles/high --out_dir ~/magFiles/gtdbtk_high/identify --extension fa --cpus 8
+gtdbtk identify --genome_dir $home/magFiles/high --out_dir $home/magFiles/gtdbtk_high/identify --extension fa --cpus 8
 
-gtdbtk align --identify_dir ~/magFiles/gtdbtk_high/identify --out_dir ~/magFiles/gtdbtk_high/align --cpus 8
+gtdbtk align --identify_dir $home/magFiles/gtdbtk_high/identify --out_dir $home/magFiles/gtdbtk_high/align --cpus 8
 
-gtdbtk classify --genome_dir ~/magFiles/high --align_dir ~/magFiles/gtdbtk_high/align --out_dir ~/magFiles/gtdbtk_high/classify --extension fa --cpus 8
+gtdbtk classify --genome_dir $home/magFiles/high --align_dir $home/magFiles/gtdbtk_high/align --out_dir $home/magFiles/gtdbtk_high/classify --extension fa --cpus 8
 
 
 ########################
@@ -219,11 +221,11 @@ nano gtdbtk_med.slurm
 
 conda activate gtdbtk-2.7.2
 
-gtdbtk identify --genome_dir ~/magFiles/med --out_dir ~/magFiles/gtdbtk_med/identify --extension fa --cpus 8
+gtdbtk identify --genome_dir $home/magFiles/med --out_dir $home/magFiles/gtdbtk_med/identify --extension fa --cpus 8
 
-gtdbtk align --identify_dir ~/magFiles/gtdbtk_med/identify --out_dir ~/magFiles/gtdbtk_med/align --cpus 8
+gtdbtk align --identify_dir $home/magFiles/gtdbtk_med/identify --out_dir $home/magFiles/gtdbtk_med/align --cpus 8
 
-gtdbtk classify --genome_dir ~/magFiles/med --align_dir ~/magFiles/gtdbtk_med/align --out_dir ~/magFiles/gtdbtk_med/classify --extension fa --cpus 8
+gtdbtk classify --genome_dir $home/magFiles/med --align_dir $home/magFiles/gtdbtk_med/align --out_dir $home/magFiles/gtdbtk_med/classify --extension fa --cpus 8
 
 
 
